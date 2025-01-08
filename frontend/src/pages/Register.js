@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import for redirecting
+import { useNavigate,Link } from "react-router-dom"; // Import for redirecting
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -11,25 +11,33 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form Data: ", { name, email, password, role }); 
 
-    try {
+    try { 
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, role }), 
+        body: JSON.stringify({ name, email, password, role }),
       });
 
       if (!response.ok) {
-        throw new Error("Error during registration");
+        throw new Error("Error during registration frontend side");
       }
 
       const data = await response.json();
       console.log("Registration successful:", data);
+      if (role === "student") {
+        navigate("/dashboard/student"); // Redirect to Student Dashboard
+      } else if (role === "teacher") {
+        navigate("/dashboard/teacher"); // Redirect to Teacher Dashboard
+      } else if (role === "admin") {
+        navigate("/dashboard/admin"); // Redirect to Admin Dashboard
+      }
 
       
-      navigate("/login");
+      //navigate("/login");
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -86,9 +94,7 @@ const Register = () => {
         </button>
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500">
-            Login
-          </a>
+          <Link to="/login" className="text-blue-500">Login</Link>
         </p>
       </form>
     </div>
